@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZenithPay - Assistente</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+background:#050505;
+color:#fff;
+min-height:100vh;
+display:flex;
+justify-content:center;
+overflow-x:hidden;
+}
+
+.app{
+width:100%;
+max-width:600px;
+min-height:100vh;
+background:
+radial-gradient(circle at 50% 18%,rgba(194,153,59,.12),transparent 32%),
+linear-gradient(180deg,#080808 0%,#050505 100%);
+position:relative;
+padding-bottom:94px;
+}
+
+/* HEADER */
+
+header{
+height:74px;
+display:flex;
+align-items:center;
+justify-content:center;
+position:relative;
+padding:0 22px;
+}
+
+.logo{
+width:112px;
+height:auto;
+}
+
+.back{
+position:absolute;
+left:20px;
+width:38px;
+height:38px;
+border:1px solid rgba(255,255,255,.08);
+background:rgba(255,255,255,.035);
+border-radius:12px;
+color:#ddd;
+font-size:22px;
+cursor:pointer;
+}
+
+.help{
+position:absolute;
+right:20px;
+width:38px;
+height:38px;
+border:1px solid rgba(255,255,255,.08);
+background:rgba(255,255,255,.035);
+border-radius:12px;
+color:#d3b25f;
+font-size:15px;
+font-weight:bold;
+}
+
+/* CONTEÚDO */
+
+.content{
+padding:5px 20px 0;
+}
+
+.title{
+font-size:27px;
+font-weight:700;
+letter-spacing:-.7px;
+}
+
+.subtitle{
+font-size:13px;
+color:#858585;
+margin-top:6px;
+}
+
+/* ASSISTENTE */
+
+.assistant{
+display:flex;
+flex-direction:column;
+align-items:center;
+margin-top:27px;
+}
+
+.orb{
+width:142px;
+height:142px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+position:relative;
+background:
+radial-gradient(circle at 35% 30%,#fff4c9 0%,#d8b65e 8%,#80672c 30%,#17140d 67%,#080808 100%);
+border:1px solid rgba(222,190,111,.55);
+box-shadow:
+0 0 35px rgba(211,174,78,.18),
+0 0 80px rgba(211,174,78,.07),
+inset 0 0 30px rgba(255,220,133,.15);
+transition:.35s;
+}
+
+.orb::before{
+content:"";
+position:absolute;
+inset:-12px;
+border-radius:50%;
+border:1px solid rgba(210,173,77,.13);
+}
+
+.orb::after{
+content:"";
+position:absolute;
+inset:-25px;
+border-radius:50%;
+border:1px solid rgba(210,173,77,.06);
+}
+
+.orb-symbol{
+font-size:42px;
+color:#fff3c7;
+text-shadow:0 0 18px rgba(255,218,126,.65);
+}
+
+.orb.listening{
+animation:pulse 1.2s infinite;
+}
+
+.orb.listening::before{
+animation:ring 1.2s infinite;
+}
+
+.orb.listening::after{
+animation:ring2 1.2s infinite;
+}
+
+@keyframes pulse{
+0%,100%{
+transform:scale(1);
+box-shadow:0 0 35px rgba(211,174,78,.18);
+}
+50%{
+transform:scale(1.06);
+box-shadow:0 0 60px rgba(211,174,78,.38);
+}
+}
+
+@keyframes ring{
+0%{
+transform:scale(.9);
+opacity:.7;
+}
+100%{
+transform:scale(1.2);
+opacity:0;
+}
+}
+
+@keyframes ring2{
+0%{
+transform:scale(.85);
+opacity:.5;
+}
+100%{
+transform:scale(1.35);
+opacity:0;
+}
+}
+
+.assistant-status{
+margin-top:18px;
+font-size:14px;
+color:#d4b86c;
+font-weight:600;
+}
+
+.assistant-description{
+margin-top:5px;
+font-size:11px;
+color:#737373;
+}
+
+/* CHAT */
+
+.chat{
+margin-top:25px;
+display:flex;
+flex-direction:column;
+gap:12px;
+max-height:230px;
+overflow-y:auto;
+padding:2px 2px 4px;
+scrollbar-width:none;
+}
+
+.chat::-webkit-scrollbar{
+display:none;
+}
+
+.message{
+max-width:84%;
+padding:12px 15px;
+border-radius:17px;
+font-size:13px;
+line-height:1.45;
+animation:messageIn .25s ease;
+}
+
+@keyframes messageIn{
+from{
+opacity:0;
+transform:translateY(7px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+.message.user{
+align-self:flex-end;
+background:linear-gradient(135deg,#b9923e,#806425);
+color:#080808;
+border-bottom-right-radius:5px;
+}
+
+.message.zenith{
+align-self:flex-start;
+background:rgba(255,255,255,.045);
+border:1px solid rgba(255,255,255,.07);
+color:#ddd;
+border-bottom-left-radius:5px;
+}
+
+.message-label{
+display:block;
+font-size:9px;
+letter-spacing:.7px;
+text-transform:uppercase;
+margin-bottom:4px;
+opacity:.55;
+}
+
+/* PERGUNTAS */
+
+.questions{
+margin-top:20px;
+}
+
+.questions-title{
+font-size:11px;
+text-transform:uppercase;
+letter-spacing:1px;
+color:#707070;
+margin:0 2px 10px;
+}
+
+.question-list{
+display:flex;
+gap:8px;
+overflow-x:auto;
+padding:2px 2px 7px;
+scrollbar-width:none;
+}
+
+.question-list::-webkit-scrollbar{
+display:none;
+}
+
+.question{
+flex-shrink:0;
+border:1px solid rgba(207,169,76,.16);
+background:rgba(205,168,76,.045);
+color:#cdb36f;
+border-radius:13px;
+padding:9px 12px;
+font-size:11px;
+cursor:pointer;
+transition:.2s;
+}
+
+.question:hover{
+background:rgba(205,168,76,.1);
+border-color:rgba(207,169,76,.3);
+}
+
+/* CONTROLE */
+
+.controls{
+display:flex;
+align-items:center;
+gap:10px;
+margin-top:17px;
+}
+
+.input-box{
+height:51px;
+flex:1;
+display:flex;
+align-items:center;
+border:1px solid rgba(255,255,255,.08);
+background:rgba(255,255,255,.025);
+border-radius:16px;
+padding:0 14px;
+}
+
+.input-box input{
+width:100%;
+height:100%;
+border:0;
+outline:none;
+background:transparent;
+color:#fff;
+font-size:13px;
+}
+
+.input-box input::placeholder{
+color:#626262;
+}
+
+.send{
+width:48px;
+height:48px;
+border-radius:15px;
+border:1px solid rgba(255,255,255,.08);
+background:#151515;
+color:#cdb05e;
+font-size:19px;
+cursor:pointer;
+}
+
+.mic{
+width:55px;
+height:55px;
+border-radius:50%;
+border:1px solid rgba(218,181,86,.55);
+background:linear-gradient(145deg,#d3b15e,#94732e);
+color:#090909;
+font-size:21px;
+cursor:pointer;
+box-shadow:0 0 25px rgba(199,159,62,.14);
+transition:.2s;
+}
+
+.mic:active{
+transform:scale(.94);
+}
+
+.mic.active{
+background:linear-gradient(145deg,#f0d88b,#b28b38);
+box-shadow:0 0 35px rgba(220,182,84,.4);
+}
+
+/* DICA */
+
+.tip{
+margin-top:15px;
+text-align:center;
+font-size:10px;
+color:#555;
+}
+
+/* MENU */
+
+.bottom{
+position:fixed;
+bottom:0;
+left:50%;
+transform:translateX(-50%);
+width:100%;
+max-width:600px;
+height:78px;
+background:rgba(8,8,8,.95);
+backdrop-filter:blur(18px);
+-webkit-backdrop-filter:blur(18px);
+border-top:1px solid rgba(255,255,255,.06);
+display:flex;
+align-items:center;
+justify-content:space-around;
+z-index:50;
+padding:0 6px;
+}
+
+.nav{
+text-decoration:none;
+color:#666;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+gap:5px;
+font-size:10px;
+height:58px;
+width:20%;
+border-radius:13px;
+}
+
+.nav-icon{
+font-size:20px;
+line-height:20px;
+}
+
+.nav.active{
+color:#d4b45f;
+}
+
+.nav.active .nav-icon{
+filter:drop-shadow(0 0 7px rgba(210,173,76,.35));
+}
+
+/* RESPONSIVIDADE */
+
+@media(min-width:768px){
+.app{
+max-width:620px;
+}
+
+.content{
+padding-left:25px;
+padding-right:25px;
+}
+
+.bottom{
+max-width:620px;
+}
+}
+
+@media(max-width:350px){
+
+.content{
+padding-left:15px;
+padding-right:15px;
+}
+
+.orb{
+width:125px;
+height:125px;
+}
+
+.chat{
+max-height:200px;
+}
+
+.question{
+font-size:10px;
+}
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+
+<button class="back" onclick="history.back()">‹</button>
+
+<img src="Zenith.png" class="logo" alt="ZenithPay">
+
+<button class="help">?</button>
+
+</header>
+
+<main class="content">
+
+<h1 class="title">Assistente Zenith</h1>
+
+<p class="subtitle">
+Seu assistente financeiro, sempre disponível.
+</p>
+
+<section class="assistant">
+
+<div class="orb" id="orb">
+<div class="orb-symbol">✦</div>
+</div>
+
+<div class="assistant-status" id="status">
+Como posso ajudar?
+</div>
+
+<div class="assistant-description" id="statusDescription">
+Toque no microfone ou escolha uma pergunta abaixo
+</div>
+
+</section>
+
+<section class="chat" id="chat">
+
+<div class="message zenith">
+<span class="message-label">Zenith</span>
+Olá! Sou a assistente da ZenithPay. Posso ajudar você com seu saldo, cartão, investimentos, transações e muito mais.
+</div>
+
+</section>
+
+<section class="questions">
+
+<div class="questions-title">
+Perguntas para experimentar
+</div>
+
+<div class="question-list">
+
+<button class="question" onclick="askQuestion('Qual é o meu saldo?')">
+Qual é o meu saldo?
+</button>
+
+<button class="question" onclick="askQuestion('Quanto eu posso investir?')">
+Quanto posso investir?
+</button>
+
+<button class="question" onclick="askQuestion('Tenho alguma pendência de pagamento?')">
+Tenho alguma pendência?
+</button>
+
+<button class="question" onclick="askQuestion('Qual é o limite do meu cartão?')">
+Limite do cartão
+</button>
+
+<button class="question" onclick="askQuestion('Qual é o valor da minha fatura?')">
+Valor da fatura
+</button>
+
+<button class="question" onclick="askQuestion('Quando vence minha fatura?')">
+Vencimento da fatura
+</button>
+
+<button class="question" onclick="askQuestion('Quais foram minhas últimas transações?')">
+Últimas transações
+</button>
+
+<button class="question" onclick="askQuestion('Quanto eu gastei este mês?')">
+Gastos do mês
+</button>
+
+<button class="question" onclick="askQuestion('Quanto tenho investido?')">
+Meus investimentos
+</button>
+
+<button class="question" onclick="askQuestion('Como começar a investir?')">
+Como investir?
+</button>
+
+</div>
+
+</section>
+
+<div class="controls">
+
+<div class="input-box">
+
+<input
+type="text"
+id="input"
+placeholder="Digite uma pergunta..."
+onkeydown="if(event.key==='Enter')sendMessage()"
+>
+
+</div>
+
+<button class="send" onclick="sendMessage()">➤</button>
+
+<button class="mic" id="mic" onclick="startVoice()">●</button>
+
+</div>
+
+<div class="tip">
+Toque no microfone e fale naturalmente com a Zenith.
+</div>
+
+</main>
+
+<nav class="bottom">
+
+<a class="nav" href="inicio.html">
+<span class="nav-icon">⌂</span>
+<span>Início</span>
+</a>
+
+<a class="nav" href="transacoes.html">
+<span class="nav-icon">↔</span>
+<span>Transações</span>
+</a>
+
+<a class="nav" href="investimentos.html">
+<span class="nav-icon">▥</span>
+<span>Investimentos</span>
+</a>
+
+<a class="nav" href="beneficios.html">
+<span class="nav-icon">♧</span>
+<span>Benefícios</span>
+</a>
+
+<a class="nav" href="perfil.html">
+<span class="nav-icon">♙</span>
+<span>Perfil</span>
+</a>
+
+</nav>
+
+</div>
+
+<script>
+
+/* ================================
+   DADOS DA ZENITH
+================================ */
+
+const answers = {
+
+saldo:{
+keywords:[
+"saldo",
+"quanto tenho",
+"quanto eu tenho",
+"dinheiro tenho",
+"quanto dinheiro"
+],
+response:
+"Seu saldo atual é de R$ 25.680,50."
+},
+
+investir:{
+keywords:[
+"quanto posso investir",
+"posso investir",
+"quanto eu posso",
+"valor posso investir",
+"investir agora"
+],
+response:
+"Com base no seu saldo disponível, você pode investir até R$ 8.500,00 com segurança."
+},
+
+pendencia:{
+keywords:[
+"pendência",
+"pendencia",
+"pagamento pendente",
+"conta pendente",
+"tenho alguma pendência",
+"tenho pendência"
+],
+response:
+"Você não possui nenhuma pendência de pagamento no momento."
+},
+
+limite:{
+keywords:[
+"limite",
+"limite do cartão",
+"quanto posso gastar",
+"disponível no cartão"
+],
+response:
+"Seu limite atual é de R$ 12.000,00. Você ainda possui R$ 7.450,00 disponíveis."
+},
+
+fatura:{
+keywords:[
+"valor da fatura",
+"fatura",
+"quanto está a fatura",
+"quanto é minha fatura"
+],
+response:
+"Sua fatura atual está em R$ 1.248,90."
+},
+
+vencimento:{
+keywords:[
+"quando vence",
+"vencimento",
+"dia da fatura",
+"vence minha fatura"
+],
+response:
+"Sua próxima fatura vence no dia 10."
+},
+
+transacoes:{
+keywords:[
+"últimas transações",
+"ultimas transacoes",
+"últimas compras",
+"ultimas compras",
+"movimentações",
+"movimentacoes"
+],
+response:
+"Suas últimas movimentações foram: pagamento no Atacarejo, R$ 184,70; assinatura de serviço, R$ 39,90; e transferência recebida de R$ 850,00."
+},
+
+gastos:{
+keywords:[
+"quanto gastei",
+"gastei este mês",
+"gastos do mês",
+"gastos esse mês",
+"quanto eu gastei"
+],
+response:
+"Até o momento, você gastou R$ 2.430,80 neste mês."
+},
+
+investimentos:{
+keywords:[
+"quanto tenho investido",
+"meus investimentos",
+"investimentos",
+"quanto investi",
+"dinheiro investido"
+],
+response:
+"Você possui atualmente R$ 17.180,00 distribuídos entre seus investimentos."
+},
+
+comoInvestir:{
+keywords:[
+"como começar a investir",
+"como investir",
+"começar a investir",
+"quero investir",
+"onde investir"
+],
+response:
+"Para começar, a Zenith recomenda conhecer seu perfil de investidor, definir seus objetivos e montar uma reserva de emergência antes de escolher os investimentos."
+}
+
+};
+
+
+/* ================================
+   ELEMENTOS
+================================ */
+
+const chat=document.getElementById("chat");
+const input=document.getElementById("input");
+const mic=document.getElementById("mic");
+const orb=document.getElementById("orb");
+const status=document.getElementById("status");
+const statusDescription=document.getElementById("statusDescription");
+
+
+/* ================================
+   ADICIONAR MENSAGEM
+================================ */
+
+function addMessage(text,type){
+
+const message=document.createElement("div");
+
+message.className="message "+type;
+
+message.innerHTML=`
+<span class="message-label">
+${type==="user"?"Você":"Zenith"}
+</span>
+${text}
+`;
+
+chat.appendChild(message);
+
+chat.scrollTop=chat.scrollHeight;
+
+}
+
+
+/* ================================
+   INTERPRETAR PERGUNTA
+================================ */
+
+function getAnswer(question){
+
+const text=question
+.toLowerCase()
+.normalize("NFD")
+.replace(/[\u0300-\u036f]/g,"");
+
+for(const key in answers){
+
+const item=answers[key];
+
+for(const keyword of item.keywords){
+
+const normalizedKeyword=keyword
+.toLowerCase()
+.normalize("NFD")
+.replace(/[\u0300-\u036f]/g,"");
+
+if(text.includes(normalizedKeyword)){
+return item.response;
+}
+
+}
+
+}
+
+return "Ainda estou aprendendo a responder esse tipo de pergunta. Experimente perguntar sobre seu saldo, cartão, fatura, investimentos ou transações.";
+
+}
+
+
+/* ================================
+   RESPONDER
+================================ */
+
+function askQuestion(question){
+
+addMessage(question,"user");
+
+input.value="";
+
+status.textContent="Analisando sua pergunta...";
+statusDescription.textContent="A Zenith está procurando a melhor resposta.";
+
+setTimeout(()=>{
+
+const response=getAnswer(question);
+
+addMessage(response,"zenith");
+
+status.textContent="Como posso ajudar?";
+statusDescription.textContent="Toque no microfone ou faça outra pergunta.";
+
+speak(response);
+
+},650);
+
+}
+
+
+/* ================================
+   DIGITAÇÃO
+================================ */
+
+function sendMessage(){
+
+const question=input.value.trim();
+
+if(!question){
+return;
+}
+
+askQuestion(question);
+
+}
+
+
+/* ================================
+   VOZ
+================================ */
+
+let recognition;
+
+function startVoice(){
+
+if(!("webkitSpeechRecognition" in window) &&
+!('SpeechRecognition' in window)){
+
+alert("O reconhecimento de voz não é compatível com este navegador. Tente usar o Google Chrome.");
+
+return;
+
+}
+
+const SpeechRecognition=
+window.SpeechRecognition ||
+window.webkitSpeechRecognition;
+
+recognition=new SpeechRecognition();
+
+recognition.lang="pt-BR";
+recognition.continuous=false;
+recognition.interimResults=false;
+
+recognition.onstart=function(){
+
+mic.classList.add("active");
+
+orb.classList.add("listening");
+
+status.textContent="Estou ouvindo...";
+statusDescription.textContent="Fale sua pergunta normalmente.";
+
+};
+
+recognition.onresult=function(event){
+
+const transcript=
+event.results[0][0].transcript;
+
+input.value=transcript;
+
+askQuestion(transcript);
+
+};
+
+recognition.onerror=function(){
+
+stopListening();
+
+status.textContent="Não consegui entender.";
+
+statusDescription.textContent="Tente falar novamente.";
+
+};
+
+recognition.onend=function(){
+
+stopListening();
+
+};
+
+recognition.start();
+
+}
+
+
+/* ================================
+   PARAR MICROFONE
+================================ */
+
+function stopListening(){
+
+mic.classList.remove("active");
+
+orb.classList.remove("listening");
+
+}
+
+
+/* ================================
+   SÍNTESE DE VOZ
+================================ */
+
+function speak(text){
+
+if(!("speechSynthesis" in window)){
+return;
+}
+
+window.speechSynthesis.cancel();
+
+const utterance=
+new SpeechSynthesisUtterance(text);
+
+utterance.lang="pt-BR";
+utterance.rate=.95;
+utterance.pitch=1;
+
+window.speechSynthesis.speak(utterance);
+
+}
+
+</script>
+
+</body>
+</html>
